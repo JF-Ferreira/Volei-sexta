@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vôlei de Sexta</title>
+    <link rel="icon" type="image/png" href="logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -19,7 +20,9 @@
         }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body {
-            background: radial-gradient(circle at top right, #2d2f21, #13150d);
+            /* FUNDO ALTERADO PARA IMAGEM */
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('fundo.png') no-repeat center center fixed;
+            background-size: cover;
             color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden;
         }
         header {
@@ -27,6 +30,9 @@
             background: rgba(19, 21, 13, 0.95); border-bottom: 2px solid var(--accent);
             position: sticky; top: 0; z-index: 1000;
         }
+        /* ESTILO DA LOGO NO HEADER */
+        .logo img { height: 40px; width: auto; display: block; }
+        
         .logo { font-size: 20px; font-weight: 900; background: linear-gradient(to right, #86efac, #fde047); -webkit-background-clip: text; color: transparent; }
         .container { max-width: 1200px; margin: 15px auto; padding: 0 15px; display: flex; flex-direction: column; gap: 20px; }
         .glass-panel { background: var(--surface); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
@@ -72,7 +78,7 @@
 <div id="overlay" class="overlay hidden" onclick="fecharLogin()"></div>
 
 <header>
-    <div class="logo">🏐 Vôlei Sexta</div>
+    <div class="logo"><img src="logo.png" alt="Vôlei de Sexta"></div>
     <div style="display: flex; align-items: center; gap: 8px;">
         <span id="userStatus" style="font-size: 10px; opacity: 0.6;">Jogador</span>
         <button id="btnLogin" class="btn-ghost" onclick="abrirLogin()">Acesso</button>

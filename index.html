@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vôlei de Sexta | Live Pro</title>
+    <title>Vôlei de Sexta</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -55,7 +55,7 @@
 <div id="overlay" class="overlay hidden" onclick="fecharLogin()"></div>
 
 <header>
-    <div class="logo">🏐 Vôlei SEXTA LIVE</div>
+    <div class="logo">🏐 Vôlei SEXTA</div>
     <div style="display: flex; align-items: center; gap: 8px;">
         <span id="userStatus" style="font-size: 10px; opacity: 0.6;">Visitante</span>
         <button id="btnLogin" class="btn-ghost" onclick="abrirLogin()">Acesso</button>
@@ -66,7 +66,7 @@
 <div class="container">
     <div id="loginPanel" class="glass-panel hidden">
         <h2 style="text-align: center; margin-top: 0;">Identificação</h2>
-        <input type="password" id="senhaInput" placeholder="Senha (admin123 ou jogo123)">
+        <input type="password" id="senhaInput" placeholder="Senha">
         <button class="btn-primary" onclick="fazerLogin()">Entrar</button>
     </div>
 
@@ -95,8 +95,8 @@
     </div>
 
     <div id="adminPanel" class="glass-panel hidden">
-        <h2 style="margin-top:0;">⚙️ Cadastro de Atleta</h2>
-        <input type="hidden" id="editIndex">
+        <h2 id="adminTitulo" style="margin-top:0;">⚙️ Cadastro de Atleta</h2>
+        <input type="hidden" id="editIndex" value="">
         <input type="text" id="nome" placeholder="Nome do Jogador">
         <div style="display: flex; gap: 10px;">
             <input type="number" id="numero" placeholder="Nº Camisa">
@@ -109,11 +109,14 @@
             <div><small>Saque</small><input type="number" id="sac" step="0.5" value="3"></div>
             <div><small>Levant.</small><input type="number" id="lev" step="0.5" value="3"></div>
         </div>
-        <button class="btn-primary" onclick="salvarJogador()">💾 Salvar Atleta na Nuvem</button>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-primary" style="flex: 2;" onclick="salvarJogador()">💾 Salvar Atleta na Nuvem</button>
+            <button id="btnCancelarEdit" class="btn-ghost hidden" style="flex: 1;" onclick="cancelarEdicao()">Cancelar</button>
+        </div>
     </div>
 
     <div class="glass-panel">
-        <h2 style="margin-top:0;">Ranking do Grupo</h2>
+        <h2 style="margin-top:0;">Jogadores e Status</h2>
         <div id="jogadoresGrid" class="grid"></div>
     </div>
 </div>
@@ -124,7 +127,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // --- CONFIGURAÇÃO DO SEU FIREBASE ---
     const firebaseConfig = {
         apiKey: "AIzaSyBoZKSXzRttTqz8uL2stBNw7BcSo-UxSmE",
         authDomain: "volei-sexta.firebaseapp.com",
@@ -139,12 +141,10 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- ESTADO DO APP ---
     let jogadores = [];
     let partida = { ativa: false, ptsA: 0, ptsB: 0, setsA: 0, setsB: 0, timeA: [], timeB: [], historico: [] };
     window.usuarioLogado = null;
 
-    // --- SINCRONIZAÇÃO LIVE ---
     onSnapshot(doc(db, "volei", "dados"), (snapshot) => {
         if (snapshot.exists()) {
             const data = snapshot.data();
@@ -160,7 +160,6 @@
         } catch (e) { showToast("Erro ao salvar!"); }
     }
 
-    // --- FUNÇÕES AUXILIARES ---
     window.showToast = (msg) => {
         const t = document.getElementById("toast");
         t.innerText = msg; t.classList.add("show");
@@ -178,7 +177,6 @@
         return Math.round(((Number(j.atk) + Number(j.def) + Number(j.rec) + Number(j.sac) + Number(j.lev)) / 25) * 100);
     }
 
-    // --- INTERFACE ---
     window.abrirLogin = () => { document.getElementById('loginPanel').classList.remove('hidden'); document.getElementById('overlay').classList.remove('hidden'); };
     window.fecharLogin = () => { document.getElementById('loginPanel').classList.add('hidden'); document.getElementById('overlay').classList.add('hidden'); };
     
@@ -194,7 +192,36 @@
 
     window.logout = () => { window.usuarioLogado = null; atualizarTudo(); };
 
+    window.prepararEdicao = (i) => {
+        const j = jogadores[i];
+        document.getElementById('editIndex').value = i;
+        document.getElementById('nome').value = j.nome;
+        document.getElementById('numero').value = j.numero;
+        document.getElementById('foto').value = j.foto;
+        document.getElementById('atk').value = j.atk;
+        document.getElementById('def').value = j.def;
+        document.getElementById('rec').value = j.rec;
+        document.getElementById('sac').value = j.sac;
+        document.getElementById('lev').value = j.lev;
+        
+        document.getElementById('adminTitulo').innerText = "✍️ Editando Atleta";
+        document.getElementById('btnCancelarEdit').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.cancelarEdicao = () => {
+        document.getElementById('editIndex').value = "";
+        document.getElementById('nome').value = "";
+        document.getElementById('numero').value = "";
+        document.getElementById('foto').value = "";
+        document.getElementById('adminTitulo').innerText = "⚙️ Cadastro de Atleta";
+        document.getElementById('btnCancelarEdit').classList.add('hidden');
+    };
+
     window.salvarJogador = async () => {
+        const nomeInput = document.getElementById('nome').value;
+        if(!nomeInput) return showToast("⚠️ Digite um nome!");
+
         const vals = [
             Number(document.getElementById('atk').value),
             Number(document.getElementById('def').value),
@@ -202,10 +229,9 @@
             Number(document.getElementById('sac').value),
             Number(document.getElementById('lev').value)
         ];
-        if(vals.some(n => n < 0.5 || n > 5)) return showToast("⛔ Notas de 0.5 a 5!");
 
         const j = {
-            nome: document.getElementById('nome').value,
+            nome: nomeInput,
             numero: document.getElementById('numero').value || "00",
             foto: document.getElementById('foto').value || "https://i.imgur.com/3c8E8QY.png",
             atk: vals[0], def: vals[1], rec: vals[2], sac: vals[3], lev: vals[4],
@@ -213,16 +239,20 @@
         };
 
         const idx = document.getElementById('editIndex').value;
-        if(idx === "") jogadores.push(j);
-        else { j.jogos = jogadores[idx].jogos; j.vitorias = jogadores[idx].vitorias; jogadores[idx] = j; }
+        if(idx === "") {
+            jogadores.push(j);
+        } else {
+            j.jogos = jogadores[idx].jogos;
+            j.vitorias = jogadores[idx].vitorias;
+            jogadores[idx] = j;
+        }
 
-        document.getElementById('editIndex').value = "";
-        document.getElementById('nome').value = "";
+        cancelarEdicao();
         await salvarNaRede();
-        showToast("✅ Jogador Salvo!");
+        showToast("✅ Dados Atualizados!");
     };
 
-    window.excluir = async (i) => { if(confirm("Apagar?")) { jogadores.splice(i, 1); await salvarNaRede(); } };
+    window.excluir = async (i) => { if(confirm("Apagar permanentemente?")) { jogadores.splice(i, 1); await salvarNaRede(); } };
 
     window.gerarTimes = async () => {
         const sel = Array.from(document.querySelectorAll('.chk:checked')).map(c => ({...jogadores[c.value], idx: c.value, ovr: calcOVR(jogadores[c.value])}));
@@ -234,7 +264,7 @@
     };
 
     window.iniciarPartida = async () => {
-        partida.ativa = true; partida.ptsA = 0; partida.ptsB = 0; partida.setsA = 0; partida.setsB = 0;
+        partida.ativa = true; partida.ptsA = 0; partida.ptsB = 0; partida.setsA = 0; partida.setsB = 0; partida.historico = [];
         await salvarNaRede();
     };
 
@@ -273,12 +303,11 @@
         document.getElementById('btnLogin').classList.toggle('hidden', !!window.usuarioLogado);
         document.getElementById('userStatus').innerText = window.usuarioLogado ? window.usuarioLogado.toUpperCase() : "Visitante";
         
-        // Galeria
         const grid = document.getElementById('jogadoresGrid');
         grid.innerHTML = jogadores.map((j, i) => `
             <div class="card">
                 <div class="badge-ovr">${calcOVR(j)}</div>
-                <img src="${j.foto}" class="card-img">
+                <img src="${j.foto}" class="card-img" onerror="this.src='https://i.imgur.com/3c8E8QY.png'">
                 <div class="card-info">
                     <div style="font-weight:900;">#${j.numero} ${j.nome}</div>
                     <div style="font-size:11px; color:var(--primary); margin-bottom:8px;">${j.vitorias}V / ${j.jogos}J</div>
@@ -289,19 +318,22 @@
                         <div class="skill-item"><span>SAC</span><span class="skill-stars">${renderStars(j.sac)}</span></div>
                         <div class="skill-item"><span>LEV</span><span class="skill-stars">${renderStars(j.lev)}</span></div>
                     </div>
-                    ${window.usuarioLogado === 'admin' ? `<button onclick="excluir(${i})" class="btn-danger" style="width:100%; padding:5px; margin-top:10px; font-size:10px;">Excluir</button>` : ''}
+                    ${window.usuarioLogado === 'admin' ? `
+                        <div style="display: flex; gap: 5px; margin-top: 10px;">
+                            <button onclick="prepararEdicao(${i})" class="btn-accent" style="flex:1; padding:5px; font-size:10px;">Editar</button>
+                            <button onclick="excluir(${i})" class="btn-danger" style="flex:1; padding:5px; font-size:10px;">Excluir</button>
+                        </div>
+                    ` : ''}
                 </div>
             </div>
         `).join("");
 
-        // Presença
         document.getElementById('listaPresenca').innerHTML = jogadores.map((j, i) => `
             <label style="display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
                 <input type="checkbox" class="chk" value="${i}" checked style="width:20px; height:20px;"> <span>${j.nome}</span>
             </label>
         `).join("");
 
-        // Times Gerados
         if(partida.timeA.length > 0) {
             document.getElementById('timesGeradosPanel').classList.remove('hidden');
             document.getElementById('timesGrid').innerHTML = `
@@ -310,7 +342,6 @@
             `;
         }
 
-        // Placar
         document.getElementById('placarPanel').classList.toggle('hidden', !partida.ativa);
         document.getElementById('ptsA').innerText = partida.ptsA.toString().padStart(2,'0');
         document.getElementById('ptsB').innerText = partida.ptsB.toString().padStart(2,'0');

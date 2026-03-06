@@ -307,16 +307,31 @@
         }
     };
 
-    window.gerarCamposAvaliacao = () => {
-        const eu = document.getElementById('selectEuSou').value;
-        const lista = document.getElementById('listaParaAvaliar');
-        if(!eu) { lista.innerHTML = ""; return; }
+            window.gerarCamposAvaliacao = () => {
+            const eu = document.getElementById('selectEuSou').value;
+            const lista = document.getElementById('listaParaAvaliar');
+            if(!eu) { lista.innerHTML = ""; return; }
 
-        if(scouting.votantes.includes(eu)) {
-            lista.innerHTML = "<p style='color: #fde047; text-align:center;'>Você já enviou suas avaliações neste ciclo!</p>";
-            document.getElementById('btnEnviarNotas').classList.add('hidden');
-            return;
-        }
+            if(scouting.votantes.includes(eu)) {
+                lista.innerHTML = "<p style='color: #fde047; text-align:center;'>Você já enviou suas avaliações!</p>";
+                document.getElementById('btnEnviarNotas').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('btnEnviarNotas').classList.remove('hidden');
+            lista.innerHTML = jogadores.filter(j => j.nome !== eu).map(j => `
+                <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); margin-bottom:10px;">
+                    <div style="font-weight: bold; margin-bottom: 8px; color: var(--primary);">${j.nome}</div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                        <div><small>ATK</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="atk" min="0" max="5" step="0.5" value="3"></div>
+                        <div><small>DEF</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="def" min="0" max="5" step="0.5" value="3"></div>
+                        <div><small>REC</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="rec" min="0" max="5" step="0.5" value="3"></div>
+                        <div><small>SAC</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="sac" min="0" max="5" step="0.5" value="3"></div>
+                        <div><small>LEV</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="lev" min="0" max="5" step="0.5" value="3"></div>
+                    </div>
+                </div>
+            `).join("");
+        };
 
         document.getElementById('btnEnviarNotas').classList.remove('hidden');
         lista.innerHTML = jogadores.filter(j => j.nome !== eu).map(j => `

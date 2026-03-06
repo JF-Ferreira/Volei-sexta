@@ -31,7 +31,14 @@
         .container { max-width: 1200px; margin: 15px auto; padding: 0 15px; display: flex; flex-direction: column; gap: 20px; }
         .glass-panel { background: var(--surface); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
         
-        input { width: 100%; padding: 14px; margin-bottom: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white; border-radius: 10px; font-size: 16px; }
+        input, select { width: 100%; padding: 14px; margin-bottom: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white; border-radius: 10px; font-size: 16px; }
+        
+        /* CORREÇÃO PARA O SELECT FICAR VISÍVEL */
+        select option {
+            background-color: #1a1c14; /* Fundo escuro nas opções */
+            color: white;             /* Texto branco nas opções */
+        }
+
         button { padding: 14px 20px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 11px; transition: 0.3s; }
         .btn-primary { background: var(--primary); color: #062010; width: 100%; }
         .btn-accent { background: var(--accent); color: white; }
@@ -61,6 +68,11 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1999; }
         #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #062010; padding: 12px 20px; border-radius: 50px; font-weight: bold; z-index: 3000; opacity: 0; transition: 0.3s; pointer-events: none; }
         #toast.show { opacity: 1; top: 40px; }
+
+        .scout-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+        .scout-table th, .scout-table td { padding: 10px; text-align: left; border-bottom: 1px solid var(--glass-border); }
+        .diff-up { color: #4ade80; font-weight: bold; }
+        .diff-down { color: #f87171; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -77,6 +89,42 @@
 </header>
 
 <div class="container">
+    
+    <button id="btnAbrirScout" class="btn-ghost hidden" style="width: 100%; border-color: var(--primary); color: var(--primary);" onclick="toggleScout()">⭐ AVALIAR OVR DA GALERA (Voto Único)</button>
+
+    <div id="scoutingPanel" class="glass-panel hidden" style="border: 2px solid var(--primary);">
+        <h2 style="margin-top:0; color: var(--primary); text-align: center;">⭐ AVALIAÇÃO DE ATLETAS</h2>
+        <p style="font-size: 12px; text-align: center; opacity: 0.8;">Sua identidade é usada apenas para validar o voto único. Você não pode avaliar a si mesmo.</p>
+        
+        <label>Quem é você?</label>
+        <select id="selectEuSou" style="width:100%; padding:14px; margin-bottom:15px; color: white;" onchange="gerarCamposAvaliacao()"></select>
+
+        <div id="listaParaAvaliar" style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px;"></div>
+        
+        <button class="btn-primary" id="btnEnviarNotas" style="margin-top:20px;" onclick="enviarNotas()">Enviar Minhas Avaliações</button>
+    </div>
+
+    <div id="adminAprovacaoPanel" class="glass-panel hidden" style="border: 2px solid #fde047;">
+        <h2 style="margin-top:0; color: #fde047;">📈 Sugestões de Novo OVR (Scouting)</h2>
+        <div style="overflow-x: auto;">
+            <table class="scout-table">
+                <thead>
+                    <tr>
+                        <th>Atleta</th>
+                        <th>OVR Atual</th>
+                        <th>Média Sugerida</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoTabelaAprovacao"></tbody>
+            </table>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button id="btnToggleScoutStatus" class="btn-accent" style="flex: 1;" onclick="toggleScoutStatus()">🟢 Liberar Votação</button>
+            <button class="btn-ghost" style="flex: 1; border-color: var(--danger); color: var(--danger);" onclick="limparTodasAvaliacoes()">🗑️ Limpar Votos</button>
+        </div>
+    </div>
+
     <div id="loginPanel" class="glass-panel hidden" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; width: 90%; max-width: 350px;">
         <h2 style="text-align: center; margin-top: 0;">Identificação</h2>
         <input type="password" id="senhaInput" placeholder="Senha">
@@ -172,6 +220,7 @@
     let historico = [];
     let partida = { ativa: false, ptsA: 0, ptsB: 0, setsA: 0, setsB: 0, timeA: [], timeB: [], hPoints: [], totalPtsA: 0, totalPtsB: 0, startTime: null };
     let votacao = { ativa: false, candidatos: [], votos: {} };
+    let scouting = { avaliacoes: {}, votantes: [], aberto: false }; 
     let timerInterval;
     window.usuarioLogado = null;
 
@@ -182,6 +231,7 @@
             partida = data.partidaAtiva || partida;
             historico = data.historicoJogos || [];
             votacao = data.votacao || { ativa: false, candidatos: [], votos: {} };
+            scouting = data.scouting || { avaliacoes: {}, votantes: [], aberto: false }; 
             atualizarTudo();
             if(partida.ativa) startTimer(); else stopTimer();
         }
@@ -189,7 +239,7 @@
 
     async function salvarNaRede() {
         await setDoc(doc(db, "volei", "dados"), { 
-            elenco: jogadores, partidaAtiva: partida, historicoJogos: historico, votacao: votacao
+            elenco: jogadores, partidaAtiva: partida, historicoJogos: historico, votacao: votacao, scouting: scouting
         });
     }
 
@@ -241,6 +291,116 @@
 
     window.logout = () => { window.usuarioLogado = null; atualizarTudo(); };
 
+    window.toggleScoutStatus = async () => {
+        scouting.aberto = !scouting.aberto;
+        await salvarNaRede();
+        window.showToast(scouting.aberto ? "Votação de OVR Liberada!" : "Votação de OVR Encerrada!");
+    };
+
+    window.toggleScout = () => {
+        const p = document.getElementById('scoutingPanel');
+        p.classList.toggle('hidden');
+        if(!p.classList.contains('hidden')) {
+            const sel = document.getElementById('selectEuSou');
+            sel.innerHTML = '<option value="">Selecione seu nome...</option>' + 
+                jogadores.map(j => `<option value="${j.nome}">${j.nome}</option>`).join("");
+        }
+    };
+
+    window.gerarCamposAvaliacao = () => {
+        const eu = document.getElementById('selectEuSou').value;
+        const lista = document.getElementById('listaParaAvaliar');
+        if(!eu) { lista.innerHTML = ""; return; }
+
+        if(scouting.votantes.includes(eu)) {
+            lista.innerHTML = "<p style='color: #fde047; text-align:center;'>Você já enviou suas avaliações neste ciclo!</p>";
+            document.getElementById('btnEnviarNotas').classList.add('hidden');
+            return;
+        }
+
+        document.getElementById('btnEnviarNotas').classList.remove('hidden');
+        lista.innerHTML = jogadores.filter(j => j.nome !== eu).map(j => `
+            <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                <div style="font-weight: bold; margin-bottom: 8px; color: var(--primary);">${j.nome}</div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                    <div><small>ATK</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="atk" min="1" max="5" value="3"></div>
+                    <div><small>DEF</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="def" min="1" max="5" value="3"></div>
+                    <div><small>REC</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="rec" min="1" max="5" value="3"></div>
+                    <div><small>SAC</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="sac" min="1" max="5" value="3"></div>
+                    <div><small>LEV</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="lev" min="1" max="5" value="3"></div>
+                </div>
+            </div>
+        `).join("");
+    };
+
+    window.enviarNotas = async () => {
+        const eu = document.getElementById('selectEuSou').value;
+        if(!eu) return;
+
+        const inputs = document.querySelectorAll('.scout-in');
+        inputs.forEach(i => {
+            const atleta = i.dataset.atleta;
+            const skill = i.dataset.skill;
+            const nota = Number(i.value);
+
+            if(!scouting.avaliacoes[atleta]) scouting.avaliacoes[atleta] = { atk:[], def:[], rec:[], sac:[], lev:[] };
+            scouting.avaliacoes[atleta][skill].push(nota);
+        });
+
+        scouting.votantes.push(eu);
+        await salvarNaRede();
+        window.showToast("Avaliações enviadas com sucesso!");
+        document.getElementById('scoutingPanel').classList.add('hidden');
+    };
+
+    function calcularSugestoes() {
+        const corpo = document.getElementById('corpoTabelaAprovacao');
+        corpo.innerHTML = "";
+        let temSugestao = false;
+        jogadores.forEach(j => {
+            const notas = scouting.avaliacoes[j.nome];
+            if(!notas || notas.atk.length === 0) return;
+            temSugestao = true;
+            const medias = {};
+            ["atk", "def", "rec", "sac", "lev"].forEach(s => {
+                const soma = notas[s].reduce((a, b) => a + b, 0);
+                medias[s] = soma / notas[s].length;
+            });
+            const ovrAtual = calcOVR(j);
+            const ovrSugerido = Math.round(((medias.atk + medias.def + medias.rec + medias.sac + medias.lev) / 25) * 100);
+            const diff = ovrSugerido - ovrAtual;
+            corpo.innerHTML += `
+                <tr>
+                    <td><b>${j.nome}</b><br><small style="opacity:0.5">${notas.atk.length} votos</small></td>
+                    <td>${ovrAtual}</td>
+                    <td>${ovrSugerido} <span class="${diff >= 0 ? 'diff-up' : 'diff-down'}">(${diff > 0 ? '+' : ''}${diff})</span></td>
+                    <td><button class="btn-primary" style="padding: 5px 10px; font-size: 9px;" onclick="aprovarOVR('${j.nome}', ${medias.atk}, ${medias.def}, ${medias.rec}, ${medias.sac}, ${medias.lev})">ACEITAR</button></td>
+                </tr>`;
+        });
+        if(!temSugestao) corpo.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Nenhuma avaliação pendente.</td></tr>";
+    }
+
+    window.aprovarOVR = async (nome, a, d, r, s, l) => {
+        const idx = jogadores.findIndex(j => j.nome === nome);
+        if(idx !== -1) {
+            jogadores[idx].atk = Number(a.toFixed(1));
+            jogadores[idx].def = Number(d.toFixed(1));
+            jogadores[idx].rec = Number(r.toFixed(1));
+            jogadores[idx].sac = Number(s.toFixed(1));
+            jogadores[idx].lev = Number(l.toFixed(1));
+            delete scouting.avaliacoes[nome]; 
+            await salvarNaRede();
+            window.showToast("OVR de " + nome + " atualizado!");
+        }
+    };
+
+    window.limparTodasAvaliacoes = async () => {
+        if(confirm("Isso apagará todos os votos de OVR. Confirmar?")) {
+            scouting = { avaliacoes: {}, votantes: [], aberto: scouting.aberto };
+            await salvarNaRede();
+        }
+    };
+
     window.salvarJogador = async () => {
         const nome = document.getElementById('nome').value;
         if(!nome) return showToast("Nome é obrigatório");
@@ -291,16 +451,13 @@
     window.gerarTimes = async () => {
         const selIds = Array.from(document.querySelectorAll('.chk:checked')).map(c => c.value);
         if(selIds.length < 2) return showToast("Selecione os presentes!");
-
         let sel = selIds.map(idx => {
             let j = jogadores[idx];
             let ovr = calcOVR(j);
             return { ...j, originalIdx: idx, ovr: ovr, rank: ovr + (j.jogos > 0 ? (j.vitorias/j.jogos)*10 : 0) };
         });
-
         sel.sort((a, b) => b.rank - a.rank);
         let melhorA = [], melhorB = [], menorDif = Infinity;
-
         for (let t = 0; t < 50; t++) {
             let tA = [], tB = [], sA = 0, sB = 0;
             for (let i = 0; i < sel.length; i += 2) {
@@ -309,8 +466,7 @@
                     if (Math.random() > 0.5) { tA.push(p1); sA += p1.ovr; tB.push(p2); sB += p2.ovr; }
                     else { tA.push(p2); sA += p2.ovr; tB.push(p1); sB += p1.ovr; }
                 } else {
-                    if (sA < sB) { tA.push(p1); sA += p1.ovr; }
-                    else { tB.push(p1); sB += p1.ovr; }
+                    if (sA < sB) { tA.push(p1); sA += p1.ovr; } else { tB.push(p1); sB += p1.ovr; }
                 }
             }
             let dif = Math.abs(sA - sB);
@@ -319,7 +475,6 @@
         }
         partida.timeA = melhorA; partida.timeB = melhorB;
         await salvarNaRede();
-        showToast("Times gerados (Dif: " + menorDif + ")");
     };
 
     window.iniciarPartida = async () => {
@@ -346,15 +501,10 @@
     };
 
     window.finalizarPartida = async () => {
-        if(!confirm("Encerrar jogo e salvar histórico?")) return;
+        if(!confirm("Encerrar jogo?")) return;
         const duracaoFinal = document.getElementById('timerDisplay').innerText;
-        let venceuA = false;
-        if(partida.setsA > partida.setsB) venceuA = true;
-        else if(partida.setsB > partida.setsA) venceuA = false;
-        else venceuA = (partida.totalPtsA >= partida.totalPtsB);
-
+        let venceuA = (partida.setsA > partida.setsB) || (partida.setsA === partida.setsB && partida.totalPtsA >= partida.totalPtsB);
         const vitoriosos = venceuA ? partida.timeA : partida.timeB;
-        
         historico.unshift({
             vencedor: venceuA ? "TIME A" : "TIME B",
             placar: `${partida.setsA}x${partida.setsB}`,
@@ -364,14 +514,12 @@
             data: new Date().toLocaleString(),
             mvpDaPartida: null
         });
-
         [...partida.timeA, ...partida.timeB].forEach(p => {
             if(jogadores[p.originalIdx]) {
                 jogadores[p.originalIdx].jogos++;
                 if(vitoriosos.some(w => w.nome === p.nome)) jogadores[p.originalIdx].vitorias++;
             }
         });
-
         votacao.ativa = true;
         votacao.candidatos = [...partida.timeA, ...partida.timeB].map(j => j.nome);
         votacao.votos = {};
@@ -390,7 +538,6 @@
         const idx = jogadores.findIndex(j => j.nome === vencedor);
         if(idx !== -1) jogadores[idx].mvps = (jogadores[idx].mvps || 0) + 1;
         votacao.ativa = false; await salvarNaRede();
-        showToast("MVP: " + vencedor);
     };
 
     window.zerarEstatisticas = async () => { if(confirm("Zerar ranking?")) { jogadores = jogadores.map(j => ({ ...j, jogos: 0, vitorias: 0, mvps: 0 })); await salvarNaRede(); } };
@@ -399,27 +546,30 @@
     function atualizarTudo() {
         const isAdmin = window.usuarioLogado === 'admin';
         const isMesa = window.usuarioLogado === 'mesa' || isAdmin;
-
         document.getElementById('adminPanel').classList.toggle('hidden', !isAdmin);
+        document.getElementById('adminAprovacaoPanel').classList.toggle('hidden', !isAdmin);
         document.getElementById('mesaPanel').classList.toggle('hidden', !isMesa);
         document.getElementById('btnLogout').classList.toggle('hidden', !window.usuarioLogado);
         document.getElementById('btnLogin').classList.toggle('hidden', !!window.usuarioLogado);
         document.getElementById('adminHistOps').classList.toggle('hidden', !isAdmin);
         document.getElementById('userStatus').innerText = window.usuarioLogado ? window.usuarioLogado.toUpperCase() : "Visitante";
-
+        document.getElementById('btnAbrirScout').classList.toggle('hidden', !scouting.aberto);
+        if (!scouting.aberto) document.getElementById('scoutingPanel').classList.add('hidden');
+        if(isAdmin) {
+            calcularSugestoes();
+            const btnToggle = document.getElementById('btnToggleScoutStatus');
+            btnToggle.innerText = scouting.aberto ? "🔴 Encerrar Votação OVR" : "🟢 Liberar Votação OVR";
+            btnToggle.className = scouting.aberto ? "btn-danger" : "btn-accent";
+        }
         if (votacao.ativa) {
             document.getElementById('votacaoPanel').classList.remove('hidden');
             document.getElementById('btnEncerrarVoto').classList.toggle('hidden', !isAdmin);
             document.getElementById('listaVotos').innerHTML = votacao.candidatos.map(n => `
                 <button class="btn-ghost" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;" onclick="votarMVP('${n}')">
                     <span>👤 ${n}</span> <span style="background:var(--primary); color:#000; padding:2px 10px; border-radius:6px; font-weight:900;">${votacao.votos[n] || 0}</span>
-                </button>
-            `).join("");
+                </button>`).join("");
         } else document.getElementById('votacaoPanel').classList.add('hidden');
-
-        document.getElementById('jogadoresGrid').innerHTML = jogadores
-            .sort((a,b) => getWR(b) - getWR(a) || calcOVR(b) - calcOVR(a))
-            .map((j, i) => `
+        document.getElementById('jogadoresGrid').innerHTML = jogadores.sort((a,b) => getWR(b) - getWR(a) || calcOVR(b) - calcOVR(a)).map((j, i) => `
             <div class="card">
                 <div class="badge-ovr">${calcOVR(j)}</div>
                 <div class="badge-wr">WR ${getWR(j)}%</div>
@@ -435,58 +585,22 @@
                         <div class="skill-item"><span>SAC</span><span class="skill-stars">${renderStars(j.sac)}</span></div>
                         <div class="skill-item"><span>LEV</span><span class="skill-stars">${renderStars(j.lev)}</span></div>
                     </div>
-                    ${isAdmin ? `
-                        <div style="display:flex; gap:5px; margin-top:10px;">
-                            <button onclick="prepararEdicao(${jogadores.indexOf(j)})" class="btn-ghost" style="flex:1; font-size:9px;">EDITAR</button>
-                            <button onclick="excluirJogador(${jogadores.indexOf(j)})" class="btn-ghost" style="flex:0.3; border-color:var(--danger); color:var(--danger);">🗑️</button>
-                        </div>
-                    ` : ''}
+                    ${isAdmin ? `<div style="display:flex; gap:5px; margin-top:10px;"><button onclick="prepararEdicao(${jogadores.indexOf(j)})" class="btn-ghost" style="flex:1; font-size:9px;">EDITAR</button><button onclick="excluirJogador(${jogadores.indexOf(j)})" class="btn-ghost" style="flex:0.3; border-color:var(--danger); color:var(--danger);">🗑️</button></div>` : ''}
                 </div>
-            </div>
-        `).join("");
-
-        document.getElementById('listaPresenca').innerHTML = jogadores.map((j, i) => `
-            <label style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
-                <input type="checkbox" class="chk" value="${i}" checked style="width:18px; height:18px;"> ${j.nome}
-            </label>
-        `).join("");
-
+            </div>`).join("");
+        document.getElementById('listaPresenca').innerHTML = jogadores.map((j, i) => `<label style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);"><input type="checkbox" class="chk" value="${i}" checked style="width:18px; height:18px;"> ${j.nome}</label>`).join("");
         if(partida.timeA.length > 0) {
             document.getElementById('timesGeradosPanel').classList.remove('hidden');
             const sA = partida.timeA.reduce((acc, j) => acc + j.ovr, 0);
             const sB = partida.timeB.reduce((acc, j) => acc + j.ovr, 0);
-            document.getElementById('timesGrid').innerHTML = `
-                <div style="flex:1; background:rgba(134,239,172,0.1); padding:10px; border-radius:10px;">
-                    <b>TIME A</b> (${sA})<br><small>${partida.timeA.map(j=>j.nome).join("<br>")}</small>
-                </div>
-                <div style="flex:1; background:rgba(161,98,7,0.1); padding:10px; border-radius:10px;">
-                    <b>TIME B</b> (${sB})<br><small>${partida.timeB.map(j=>j.nome).join("<br>")}</small>
-                </div>
-            `;
+            document.getElementById('timesGrid').innerHTML = `<div style="flex:1; background:rgba(134,239,172,0.1); padding:10px; border-radius:10px;"><b>TIME A</b> (${sA})<br><small>${partida.timeA.map(j=>j.nome).join("<br>")}</small></div><div style="flex:1; background:rgba(161,98,7,0.1); padding:10px; border-radius:10px;"><b>TIME B</b> (${sB})<br><small>${partida.timeB.map(j=>j.nome).join("<br>")}</small></div>`;
         }
-
         document.getElementById('placarPanel').classList.toggle('hidden', !partida.ativa);
         document.getElementById('ptsA').innerText = partida.ptsA.toString().padStart(2,'0');
         document.getElementById('ptsB').innerText = partida.ptsB.toString().padStart(2,'0');
         document.getElementById('setsA').innerText = partida.setsA;
         document.getElementById('setsB').innerText = partida.setsB;
-
-        document.getElementById('historicoLista').innerHTML = historico.map(h => `
-            <div class="hist-item">
-                <div class="hist-winner" style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>🏆 VENCEDOR: ${h.vencedor} (${h.placar})</span>
-                    <span style="color:#fde047; font-size:10px; font-weight:900;">⏱️ ${h.duracao || '00:00'}</span>
-                </div>
-                <div class="hist-teams">
-                    <div><b>A:</b> ${h.timeA}</div>
-                    <div><b>B:</b> ${h.timeB}</div>
-                </div>
-                <div style="display:flex; justify-content:space-between; font-size:9px; opacity:0.5; margin-top:5px;">
-                    <span>${h.data}</span>
-                    ${h.mvpDaPartida ? `<span style="color:#fde047; font-weight:900;">⭐ MVP: ${h.mvpDaPartida}</span>` : ''}
-                </div>
-            </div>
-        `).join("");
+        document.getElementById('historicoLista').innerHTML = historico.map(h => `<div class="hist-item"><div class="hist-winner" style="display:flex; justify-content:space-between; align-items:center;"><span>🏆 VENCEDOR: ${h.vencedor} (${h.placar})</span><span style="color:#fde047; font-size:10px; font-weight:900;">⏱️ ${h.duracao || '00:00'}</span></div><div class="hist-teams"><div><b>A:</b> ${h.timeA}</div><div><b>B:</b> ${h.timeB}</div></div><div style="display:flex; justify-content:space-between; font-size:9px; opacity:0.5; margin-top:5px;"><span>${h.data}</span>${h.mvpDaPartida ? `<span style="color:#fde047; font-weight:900;">⭐ MVP: ${h.mvpDaPartida}</span>` : ''}</div></div>`).join("");
     }
 </script>
 </body>

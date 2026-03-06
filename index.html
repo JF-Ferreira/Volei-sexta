@@ -17,29 +17,82 @@
             --glass-border: rgba(255, 255, 255, 0.08);
             --card-bg: rgba(28, 31, 22, 0.9);
         }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('fundo.png') no-repeat center center fixed;
-            background-size: cover; color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden;
-        }
-        header {
-            display: flex; justify-content: space-between; align-items: center; padding: 15px 20px;
-            background: rgba(19, 21, 13, 0.95); border-bottom: 2px solid var(--accent);
-            position: sticky; top: 0; z-index: 1000;
-        }
-        .logo img { height: 40px; width: auto; display: block; }
-        .container { max-width: 1200px; margin: 15px auto; padding: 0 15px; display: flex; flex-direction: column; gap: 20px; }
-        .glass-panel { background: var(--surface); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-        
-        input, select { width: 100%; padding: 14px; margin-bottom: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white; border-radius: 10px; font-size: 16px; }
-        
-        /* CORREÇÃO PARA O SELECT FICAR VISÍVEL */
-        select option {
-            background-color: #1a1c14; /* Fundo escuro nas opções */
-            color: white;             /* Texto branco nas opções */
+
+        * { 
+            box-sizing: border-box; 
+            font-family: 'Inter', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
         }
 
-        button { padding: 14px 20px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 11px; transition: 0.3s; }
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('fundo.png') no-repeat center center fixed;
+            background-size: cover; 
+            color: var(--text); 
+            margin: 0; 
+            min-height: 100vh; 
+            overflow-x: hidden;
+        }
+
+        header {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px 20px;
+            background: rgba(19, 21, 13, 0.95); 
+            border-bottom: 2px solid var(--accent);
+            position: sticky; 
+            top: 0; 
+            z-index: 1000;
+        }
+
+        .logo img { height: 40px; width: auto; display: block; }
+
+        .container { 
+            max-width: 1200px; 
+            margin: 15px auto; 
+            padding: 0 15px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+        }
+
+        .glass-panel { 
+            background: var(--surface); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 16px; 
+            padding: 20px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3); 
+        }
+        
+        input, select { 
+            width: 100%; 
+            padding: 14px; 
+            margin-bottom: 10px; 
+            background: rgba(0,0,0,0.3); 
+            border: 1px solid var(--glass-border); 
+            color: white; 
+            border-radius: 10px; 
+            font-size: 16px; 
+        }
+        
+        /* CORREÇÃO DAS CORES DO SELECT PARA APARECER O TEXTO */
+        select option { 
+            background-color: #1a1c14; 
+            color: white; 
+        }
+
+        button { 
+            padding: 14px 20px; 
+            border: none; 
+            border-radius: 10px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            font-size: 11px; 
+            transition: 0.3s; 
+        }
+
         .btn-primary { background: var(--primary); color: #062010; width: 100%; }
         .btn-accent { background: var(--accent); color: white; }
         .btn-danger { background: var(--danger); color: white; }
@@ -94,10 +147,10 @@
 
     <div id="scoutingPanel" class="glass-panel hidden" style="border: 2px solid var(--primary);">
         <h2 style="margin-top:0; color: var(--primary); text-align: center;">⭐ AVALIAÇÃO DE ATLETAS</h2>
-        <p style="font-size: 12px; text-align: center; opacity: 0.8;">Sua identidade é usada apenas para validar o voto único. Você não pode avaliar a si mesmo.</p>
+        <p style="font-size: 12px; text-align: center; opacity: 0.8;">Use notas de 0.5 em 0.5 para maior precisão.</p>
         
         <label>Quem é você?</label>
-        <select id="selectEuSou" style="width:100%; padding:14px; margin-bottom:15px; color: white;" onchange="gerarCamposAvaliacao()"></select>
+        <select id="selectEuSou" onchange="gerarCamposAvaliacao()"></select>
 
         <div id="listaParaAvaliar" style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px;"></div>
         
@@ -105,7 +158,7 @@
     </div>
 
     <div id="adminAprovacaoPanel" class="glass-panel hidden" style="border: 2px solid #fde047;">
-        <h2 style="margin-top:0; color: #fde047;">📈 Sugestões de Novo OVR (Scouting)</h2>
+        <h2 style="margin-top:0; color: #fde047;">📈 Sugestões de Novo OVR</h2>
         <div style="overflow-x: auto;">
             <table class="scout-table">
                 <thead>
@@ -178,13 +231,13 @@
             <div><small>Levant.</small><input type="number" id="lev" step="0.5" value="3"></div>
         </div>
         <div style="display: flex; gap: 10px;">
-            <button class="btn-primary" style="flex: 2;" onclick="salvarJogador()">💾 Salvar</button>
+            <button class="btn-primary" style="flex: 2;" onclick="salvarJogador()">💾 Salvar Atleta</button>
             <button id="btnCancelarEdit" class="btn-ghost hidden" style="flex: 1;" onclick="cancelarEdicao()">Sair</button>
         </div>
     </div>
 
     <div class="glass-panel">
-        <h2 style="margin-top:0; color: var(--primary);">🏆 Histórico</h2>
+        <h2 style="margin-top:0; color: var(--primary);">🏆 Histórico de Jogos</h2>
         <div id="historicoLista"></div>
         <div id="adminHistOps" class="hidden" style="display: flex; gap: 10px; margin-top: 15px;">
             <button onclick="limparHistorico()" class="btn-ghost" style="flex:1; border-color: var(--danger); color: var(--danger);">Limpar Tudo</button>
@@ -239,13 +292,18 @@
 
     async function salvarNaRede() {
         await setDoc(doc(db, "volei", "dados"), { 
-            elenco: jogadores, partidaAtiva: partida, historicoJogos: historico, votacao: votacao, scouting: scouting
+            elenco: jogadores, 
+            partidaAtiva: partida, 
+            historicoJogos: historico, 
+            votacao: votacao, 
+            scouting: scouting 
         });
     }
 
     window.showToast = (msg) => {
         const t = document.getElementById("toast");
-        t.innerText = msg; t.classList.add("show");
+        t.innerText = msg; 
+        t.classList.add("show");
         setTimeout(() => t.classList.remove("show"), 2500);
     };
 
@@ -260,17 +318,29 @@
         }, 1000);
     }
 
-    function stopTimer() { clearInterval(timerInterval); }
+    function stopTimer() { 
+        clearInterval(timerInterval); 
+    }
 
     function renderStars(n) {
         let stars = "";
-        for(let i=0; i<Math.floor(n); i++) stars += "⭐";
-        if(n % 1 !== 0) stars += "✨";
+        const valor = Number(n);
+        for(let i=0; i<Math.floor(valor); i++) {
+            stars += "⭐";
+        }
+        if(valor % 1 !== 0) {
+            stars += "✨";
+        }
         return stars || "▫️";
     }
 
+    function roundHalf(num) {
+        return Math.round(num * 2) / 2;
+    }
+
     function calcOVR(j) {
-        return Math.round(((Number(j.atk) + Number(j.def) + Number(j.rec) + Number(j.sac) + Number(j.lev)) / 25) * 100);
+        const soma = Number(j.atk) + Number(j.def) + Number(j.rec) + Number(j.sac) + Number(j.lev);
+        return Math.round((soma / 25) * 100);
     }
 
     function getWR(j) {
@@ -278,23 +348,38 @@
         return Math.round((j.vitorias / j.jogos) * 100);
     }
 
-    window.abrirLogin = () => { document.getElementById('loginPanel').classList.remove('hidden'); document.getElementById('overlay').classList.remove('hidden'); };
-    window.fecharLogin = () => { document.getElementById('loginPanel').classList.add('hidden'); document.getElementById('overlay').classList.add('hidden'); };
+    window.abrirLogin = () => { 
+        document.getElementById('loginPanel').classList.remove('hidden'); 
+        document.getElementById('overlay').classList.remove('hidden'); 
+    };
+
+    window.fecharLogin = () => { 
+        document.getElementById('loginPanel').classList.add('hidden'); 
+        document.getElementById('overlay').classList.add('hidden'); 
+    };
     
     window.fazerLogin = () => {
         const s = document.getElementById('senhaInput').value;
-        if(s === "admin123") window.usuarioLogado = "admin";
-        else if(s === "mesa123") window.usuarioLogado = "mesa";
-        else return showToast("❌ Senha incorreta");
-        fecharLogin(); atualizarTudo();
+        if(s === "admin123") {
+            window.usuarioLogado = "admin";
+        } else if(s === "mesa123") {
+            window.usuarioLogado = "mesa";
+        } else {
+            return showToast("❌ Senha incorreta");
+        }
+        fecharLogin(); 
+        atualizarTudo();
     };
 
-    window.logout = () => { window.usuarioLogado = null; atualizarTudo(); };
+    window.logout = () => { 
+        window.usuarioLogado = null; 
+        atualizarTudo(); 
+    };
 
     window.toggleScoutStatus = async () => {
         scouting.aberto = !scouting.aberto;
         await salvarNaRede();
-        window.showToast(scouting.aberto ? "Votação de OVR Liberada!" : "Votação de OVR Encerrada!");
+        showToast(scouting.aberto ? "Votação OVR Liberada!" : "Votação OVR Encerrada!");
     };
 
     window.toggleScout = () => {
@@ -310,10 +395,13 @@
     window.gerarCamposAvaliacao = () => {
         const eu = document.getElementById('selectEuSou').value;
         const lista = document.getElementById('listaParaAvaliar');
-        if(!eu) { lista.innerHTML = ""; return; }
+        if(!eu) { 
+            lista.innerHTML = ""; 
+            return; 
+        }
 
         if(scouting.votantes.includes(eu)) {
-            lista.innerHTML = "<p style='color: #fde047; text-align:center;'>Você já enviou suas avaliações neste ciclo!</p>";
+            lista.innerHTML = "<p style='color: #fde047; text-align:center;'>Você já participou desta avaliação!</p>";
             document.getElementById('btnEnviarNotas').classList.add('hidden');
             return;
         }
@@ -323,11 +411,11 @@
             <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border);">
                 <div style="font-weight: bold; margin-bottom: 8px; color: var(--primary);">${j.nome}</div>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                    <div><small>ATK</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="atk" min="1" max="5" value="3"></div>
-                    <div><small>DEF</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="def" min="1" max="5" value="3"></div>
-                    <div><small>REC</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="rec" min="1" max="5" value="3"></div>
-                    <div><small>SAC</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="sac" min="1" max="5" value="3"></div>
-                    <div><small>LEV</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="lev" min="1" max="5" value="3"></div>
+                    <div><small>ATK</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="atk" min="0" max="5" step="0.5" value="3"></div>
+                    <div><small>DEF</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="def" min="0" max="5" step="0.5" value="3"></div>
+                    <div><small>REC</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="rec" min="0" max="5" step="0.5" value="3"></div>
+                    <div><small>SAC</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="sac" min="0" max="5" step="0.5" value="3"></div>
+                    <div><small>LEV</small><input type="number" class="scout-in" data-atleta="${j.nome}" data-skill="lev" min="0" max="5" step="0.5" value="3"></div>
                 </div>
             </div>
         `).join("");
@@ -343,13 +431,15 @@
             const skill = i.dataset.skill;
             const nota = Number(i.value);
 
-            if(!scouting.avaliacoes[atleta]) scouting.avaliacoes[atleta] = { atk:[], def:[], rec:[], sac:[], lev:[] };
+            if(!scouting.avaliacoes[atleta]) {
+                scouting.avaliacoes[atleta] = { atk:[], def:[], rec:[], sac:[], lev:[] };
+            }
             scouting.avaliacoes[atleta][skill].push(nota);
         });
 
         scouting.votantes.push(eu);
         await salvarNaRede();
-        window.showToast("Avaliações enviadas com sucesso!");
+        showToast("Avaliações registradas!");
         document.getElementById('scoutingPanel').classList.add('hidden');
     };
 
@@ -357,45 +447,53 @@
         const corpo = document.getElementById('corpoTabelaAprovacao');
         corpo.innerHTML = "";
         let temSugestao = false;
+
         jogadores.forEach(j => {
             const notas = scouting.avaliacoes[j.nome];
             if(!notas || notas.atk.length === 0) return;
+            
             temSugestao = true;
-            const medias = {};
+            const m = {};
             ["atk", "def", "rec", "sac", "lev"].forEach(s => {
                 const soma = notas[s].reduce((a, b) => a + b, 0);
-                medias[s] = soma / notas[s].length;
+                const mediaBruta = soma / notas[s].length;
+                m[s] = roundHalf(mediaBruta); 
             });
+
             const ovrAtual = calcOVR(j);
-            const ovrSugerido = Math.round(((medias.atk + medias.def + medias.rec + medias.sac + medias.lev) / 25) * 100);
-            const diff = ovrSugerido - ovrAtual;
+            const ovrSug = Math.round(((m.atk + m.def + m.rec + m.sac + m.lev) / 25) * 100);
+            const diff = ovrSug - ovrAtual;
+
             corpo.innerHTML += `
                 <tr>
                     <td><b>${j.nome}</b><br><small style="opacity:0.5">${notas.atk.length} votos</small></td>
                     <td>${ovrAtual}</td>
-                    <td>${ovrSugerido} <span class="${diff >= 0 ? 'diff-up' : 'diff-down'}">(${diff > 0 ? '+' : ''}${diff})</span></td>
-                    <td><button class="btn-primary" style="padding: 5px 10px; font-size: 9px;" onclick="aprovarOVR('${j.nome}', ${medias.atk}, ${medias.def}, ${medias.rec}, ${medias.sac}, ${medias.lev})">ACEITAR</button></td>
+                    <td>${ovrSug} <span class="${diff >= 0 ? 'diff-up' : 'diff-down'}">(${diff > 0 ? '+' : ''}${diff})</span></td>
+                    <td><button class="btn-primary" style="padding: 5px 10px; font-size: 9px;" onclick="aprovarOVR('${j.nome}', ${m.atk}, ${m.def}, ${m.rec}, ${m.sac}, ${m.lev})">APLICAR</button></td>
                 </tr>`;
         });
-        if(!temSugestao) corpo.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Nenhuma avaliação pendente.</td></tr>";
+
+        if(!temSugestao) {
+            corpo.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Nenhuma avaliação pendente.</td></tr>";
+        }
     }
 
     window.aprovarOVR = async (nome, a, d, r, s, l) => {
         const idx = jogadores.findIndex(j => j.nome === nome);
         if(idx !== -1) {
-            jogadores[idx].atk = Number(a.toFixed(1));
-            jogadores[idx].def = Number(d.toFixed(1));
-            jogadores[idx].rec = Number(r.toFixed(1));
-            jogadores[idx].sac = Number(s.toFixed(1));
-            jogadores[idx].lev = Number(l.toFixed(1));
+            jogadores[idx].atk = a;
+            jogadores[idx].def = d;
+            jogadores[idx].rec = r;
+            jogadores[idx].sac = s;
+            jogadores[idx].lev = l;
             delete scouting.avaliacoes[nome]; 
             await salvarNaRede();
-            window.showToast("OVR de " + nome + " atualizado!");
+            showToast("Atributos de " + nome + " atualizados!");
         }
     };
 
     window.limparTodasAvaliacoes = async () => {
-        if(confirm("Isso apagará todos os votos de OVR. Confirmar?")) {
+        if(confirm("Deseja apagar todos os votos de OVR recebidos?")) {
             scouting = { avaliacoes: {}, votantes: [], aberto: scouting.aberto };
             await salvarNaRede();
         }
@@ -404,24 +502,36 @@
     window.salvarJogador = async () => {
         const nome = document.getElementById('nome').value;
         if(!nome) return showToast("Nome é obrigatório");
+
         const j = {
-            nome, numero: document.getElementById('numero').value || "00",
+            nome: nome,
+            numero: document.getElementById('numero').value || "00",
             foto: document.getElementById('foto').value || "https://i.imgur.com/3c8E8QY.png",
-            atk: Number(document.getElementById('atk').value), def: Number(document.getElementById('def').value),
-            rec: Number(document.getElementById('rec').value), sac: Number(document.getElementById('sac').value),
-            lev: Number(document.getElementById('lev').value), jogos: 0, vitorias: 0, mvps: 0
+            atk: Number(document.getElementById('atk').value),
+            def: Number(document.getElementById('def').value),
+            rec: Number(document.getElementById('rec').value),
+            sac: Number(document.getElementById('sac').value),
+            lev: Number(document.getElementById('lev').value),
+            jogos: 0,
+            vitorias: 0,
+            mvps: 0
         };
+
         const idx = document.getElementById('editIndex').value;
-        if(idx === "") jogadores.push(j);
-        else {
-            j.jogos = jogadores[idx].jogos; j.vitorias = jogadores[idx].vitorias; j.mvps = jogadores[idx].mvps;
+        if(idx === "") {
+            jogadores.push(j);
+        } else {
+            j.jogos = jogadores[idx].jogos;
+            j.vitorias = jogadores[idx].vitorias;
+            j.mvps = jogadores[idx].mvps;
             jogadores[idx] = j;
         }
-        cancelarEdicao(); await salvarNaRede();
+        cancelarEdicao(); 
+        await salvarNaRede();
     };
 
     window.excluirJogador = async (i) => {
-        if(confirm("Excluir este atleta?")) {
+        if(confirm("Excluir este atleta definitivamente?")) {
             jogadores.splice(i, 1);
             await salvarNaRede();
         }
@@ -451,20 +561,26 @@
     window.gerarTimes = async () => {
         const selIds = Array.from(document.querySelectorAll('.chk:checked')).map(c => c.value);
         if(selIds.length < 2) return showToast("Selecione os presentes!");
+        
         let sel = selIds.map(idx => {
             let j = jogadores[idx];
             let ovr = calcOVR(j);
             return { ...j, originalIdx: idx, ovr: ovr, rank: ovr + (j.jogos > 0 ? (j.vitorias/j.jogos)*10 : 0) };
         });
+
         sel.sort((a, b) => b.rank - a.rank);
         let melhorA = [], melhorB = [], menorDif = Infinity;
+
         for (let t = 0; t < 50; t++) {
             let tA = [], tB = [], sA = 0, sB = 0;
             for (let i = 0; i < sel.length; i += 2) {
                 let p1 = sel[i], p2 = sel[i+1];
                 if (p2) {
-                    if (Math.random() > 0.5) { tA.push(p1); sA += p1.ovr; tB.push(p2); sB += p2.ovr; }
-                    else { tA.push(p2); sA += p2.ovr; tB.push(p1); sB += p1.ovr; }
+                    if (Math.random() > 0.5) { 
+                        tA.push(p1); sA += p1.ovr; tB.push(p2); sB += p2.ovr; 
+                    } else { 
+                        tA.push(p2); sA += p2.ovr; tB.push(p1); sB += p1.ovr; 
+                    }
                 } else {
                     if (sA < sB) { tA.push(p1); sA += p1.ovr; } else { tB.push(p1); sB += p1.ovr; }
                 }
@@ -473,38 +589,61 @@
             if (dif < menorDif) { menorDif = dif; melhorA = tA; melhorB = tB; }
             if (dif <= 15) break;
         }
-        partida.timeA = melhorA; partida.timeB = melhorB;
+        partida.timeA = melhorA; 
+        partida.timeB = melhorB; 
         await salvarNaRede();
     };
 
     window.iniciarPartida = async () => {
-        partida.ativa = true; partida.ptsA = 0; partida.ptsB = 0; partida.setsA = 0; partida.setsB = 0; 
-        partida.hPoints = []; partida.totalPtsA = 0; partida.totalPtsB = 0;
+        partida.ativa = true; 
+        partida.ptsA = 0; 
+        partida.ptsB = 0; 
+        partida.setsA = 0; 
+        partida.setsB = 0; 
+        partida.hPoints = []; 
+        partida.totalPtsA = 0; 
+        partida.totalPtsB = 0;
         partida.startTime = Date.now();
-        votacao.ativa = false; await salvarNaRede();
+        votacao.ativa = false; 
+        await salvarNaRede();
     };
 
     window.ponto = async (t) => {
-        if(t === 'A') { partida.ptsA++; partida.totalPtsA++; } 
-        else { partida.ptsB++; partida.totalPtsB++; }
+        if(t === 'A') { 
+            partida.ptsA++; 
+            partida.totalPtsA++; 
+        } else { 
+            partida.ptsB++; 
+            partida.totalPtsB++; 
+        }
         partida.hPoints.push(t);
-        if(partida.ptsA >= 25 && (partida.ptsA - partida.ptsB) >= 2) { partida.setsA++; partida.ptsA=0; partida.ptsB=0; }
-        if(partida.ptsB >= 25 && (partida.ptsB - partida.ptsA) >= 2) { partida.setsB++; partida.ptsA=0; partida.ptsB=0; }
+        if(partida.ptsA >= 25 && (partida.ptsA - partida.ptsB) >= 2) { 
+            partida.setsA++; partida.ptsA=0; partida.ptsB=0; 
+        }
+        if(partida.ptsB >= 25 && (partida.ptsB - partida.ptsA) >= 2) { 
+            partida.setsB++; partida.ptsA=0; partida.ptsB=0; 
+        }
         await salvarNaRede();
     };
 
     window.desfazerPonto = async () => {
         let u = partida.hPoints.pop();
-        if(u === 'A' && partida.totalPtsA > 0) { if(partida.ptsA > 0) partida.ptsA--; partida.totalPtsA--; }
-        else if(u === 'B' && partida.totalPtsB > 0) { if(partida.ptsB > 0) partida.ptsB--; partida.totalPtsB--; }
+        if(u === 'A' && partida.totalPtsA > 0) { 
+            if(partida.ptsA > 0) partida.ptsA--; 
+            partida.totalPtsA--; 
+        } else if(u === 'B' && partida.totalPtsB > 0) { 
+            if(partida.ptsB > 0) partida.ptsB--; 
+            partida.totalPtsB--; 
+        }
         await salvarNaRede();
     };
 
     window.finalizarPartida = async () => {
-        if(!confirm("Encerrar jogo?")) return;
+        if(!confirm("Encerrar jogo e salvar estatísticas?")) return;
         const duracaoFinal = document.getElementById('timerDisplay').innerText;
         let venceuA = (partida.setsA > partida.setsB) || (partida.setsA === partida.setsB && partida.totalPtsA >= partida.totalPtsB);
         const vitoriosos = venceuA ? partida.timeA : partida.timeB;
+        
         historico.unshift({
             vencedor: venceuA ? "TIME A" : "TIME B",
             placar: `${partida.setsA}x${partida.setsB}`,
@@ -514,17 +653,23 @@
             data: new Date().toLocaleString(),
             mvpDaPartida: null
         });
+
         [...partida.timeA, ...partida.timeB].forEach(p => {
             if(jogadores[p.originalIdx]) {
                 jogadores[p.originalIdx].jogos++;
-                if(vitoriosos.some(w => w.nome === p.nome)) jogadores[p.originalIdx].vitorias++;
+                if(vitoriosos.some(w => w.nome === p.nome)) {
+                    jogadores[p.originalIdx].vitorias++;
+                }
             }
         });
+
         votacao.ativa = true;
         votacao.candidatos = [...partida.timeA, ...partida.timeB].map(j => j.nome);
         votacao.votos = {};
         votacao.candidatos.forEach(n => votacao.votos[n] = 0);
-        partida.ativa = false; await salvarNaRede();
+        
+        partida.ativa = false; 
+        await salvarNaRede();
     };
 
     window.votarMVP = async (nome) => {
@@ -534,18 +679,35 @@
 
     window.encerrarVotacao = async () => {
         let vencedor = Object.keys(votacao.votos).reduce((a, b) => votacao.votos[a] > votacao.votos[b] ? a : b);
-        if (historico.length > 0) historico[0].mvpDaPartida = vencedor;
+        if (historico.length > 0) {
+            historico[0].mvpDaPartida = vencedor;
+        }
         const idx = jogadores.findIndex(j => j.nome === vencedor);
-        if(idx !== -1) jogadores[idx].mvps = (jogadores[idx].mvps || 0) + 1;
-        votacao.ativa = false; await salvarNaRede();
+        if(idx !== -1) {
+            jogadores[idx].mvps = (jogadores[idx].mvps || 0) + 1;
+        }
+        votacao.ativa = false; 
+        await salvarNaRede();
     };
 
-    window.zerarEstatisticas = async () => { if(confirm("Zerar ranking?")) { jogadores = jogadores.map(j => ({ ...j, jogos: 0, vitorias: 0, mvps: 0 })); await salvarNaRede(); } };
-    window.limparHistorico = async () => { if(confirm("Limpar histórico?")) { historico = []; await salvarNaRede(); } };
+    window.zerarEstatisticas = async () => {
+        if(confirm("Zerar ranking e vitórias de todos?")) {
+            jogadores = jogadores.map(j => ({ ...j, jogos: 0, vitorias: 0, mvps: 0 }));
+            await salvarNaRede();
+        }
+    };
+
+    window.limparHistorico = async () => {
+        if(confirm("Apagar todo o histórico de jogos?")) {
+            historico = [];
+            await salvarNaRede();
+        }
+    };
 
     function atualizarTudo() {
         const isAdmin = window.usuarioLogado === 'admin';
         const isMesa = window.usuarioLogado === 'mesa' || isAdmin;
+        
         document.getElementById('adminPanel').classList.toggle('hidden', !isAdmin);
         document.getElementById('adminAprovacaoPanel').classList.toggle('hidden', !isAdmin);
         document.getElementById('mesaPanel').classList.toggle('hidden', !isMesa);
@@ -554,13 +716,18 @@
         document.getElementById('adminHistOps').classList.toggle('hidden', !isAdmin);
         document.getElementById('userStatus').innerText = window.usuarioLogado ? window.usuarioLogado.toUpperCase() : "Visitante";
         document.getElementById('btnAbrirScout').classList.toggle('hidden', !scouting.aberto);
-        if (!scouting.aberto) document.getElementById('scoutingPanel').classList.add('hidden');
+        
+        if (!scouting.aberto) {
+            document.getElementById('scoutingPanel').classList.add('hidden');
+        }
+
         if(isAdmin) {
             calcularSugestoes();
             const btnToggle = document.getElementById('btnToggleScoutStatus');
             btnToggle.innerText = scouting.aberto ? "🔴 Encerrar Votação OVR" : "🟢 Liberar Votação OVR";
             btnToggle.className = scouting.aberto ? "btn-danger" : "btn-accent";
         }
+
         if (votacao.ativa) {
             document.getElementById('votacaoPanel').classList.remove('hidden');
             document.getElementById('btnEncerrarVoto').classList.toggle('hidden', !isAdmin);
@@ -568,7 +735,10 @@
                 <button class="btn-ghost" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;" onclick="votarMVP('${n}')">
                     <span>👤 ${n}</span> <span style="background:var(--primary); color:#000; padding:2px 10px; border-radius:6px; font-weight:900;">${votacao.votos[n] || 0}</span>
                 </button>`).join("");
-        } else document.getElementById('votacaoPanel').classList.add('hidden');
+        } else {
+            document.getElementById('votacaoPanel').classList.add('hidden');
+        }
+
         document.getElementById('jogadoresGrid').innerHTML = jogadores.sort((a,b) => getWR(b) - getWR(a) || calcOVR(b) - calcOVR(a)).map((j, i) => `
             <div class="card">
                 <div class="badge-ovr">${calcOVR(j)}</div>
@@ -588,19 +758,41 @@
                     ${isAdmin ? `<div style="display:flex; gap:5px; margin-top:10px;"><button onclick="prepararEdicao(${jogadores.indexOf(j)})" class="btn-ghost" style="flex:1; font-size:9px;">EDITAR</button><button onclick="excluirJogador(${jogadores.indexOf(j)})" class="btn-ghost" style="flex:0.3; border-color:var(--danger); color:var(--danger);">🗑️</button></div>` : ''}
                 </div>
             </div>`).join("");
-        document.getElementById('listaPresenca').innerHTML = jogadores.map((j, i) => `<label style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);"><input type="checkbox" class="chk" value="${i}" checked style="width:18px; height:18px;"> ${j.nome}</label>`).join("");
+
+        document.getElementById('listaPresenca').innerHTML = jogadores.map((j, i) => `
+            <label style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                <input type="checkbox" class="chk" value="${i}" checked style="width:18px; height:18px;"> ${j.nome}
+            </label>`).join("");
+
         if(partida.timeA.length > 0) {
             document.getElementById('timesGeradosPanel').classList.remove('hidden');
             const sA = partida.timeA.reduce((acc, j) => acc + j.ovr, 0);
             const sB = partida.timeB.reduce((acc, j) => acc + j.ovr, 0);
-            document.getElementById('timesGrid').innerHTML = `<div style="flex:1; background:rgba(134,239,172,0.1); padding:10px; border-radius:10px;"><b>TIME A</b> (${sA})<br><small>${partida.timeA.map(j=>j.nome).join("<br>")}</small></div><div style="flex:1; background:rgba(161,98,7,0.1); padding:10px; border-radius:10px;"><b>TIME B</b> (${sB})<br><small>${partida.timeB.map(j=>j.nome).join("<br>")}</small></div>`;
+            document.getElementById('timesGrid').innerHTML = `
+                <div style="flex:1; background:rgba(134,239,172,0.1); padding:10px; border-radius:10px;"><b>TIME A</b> (${sA})<br><small>${partida.timeA.map(j=>j.nome).join("<br>")}</small></div>
+                <div style="flex:1; background:rgba(161,98,7,0.1); padding:10px; border-radius:10px;"><b>TIME B</b> (${sB})<br><small>${partida.timeB.map(j=>j.nome).join("<br>")}</small></div>`;
         }
+
         document.getElementById('placarPanel').classList.toggle('hidden', !partida.ativa);
         document.getElementById('ptsA').innerText = partida.ptsA.toString().padStart(2,'0');
         document.getElementById('ptsB').innerText = partida.ptsB.toString().padStart(2,'0');
         document.getElementById('setsA').innerText = partida.setsA;
         document.getElementById('setsB').innerText = partida.setsB;
-        document.getElementById('historicoLista').innerHTML = historico.map(h => `<div class="hist-item"><div class="hist-winner" style="display:flex; justify-content:space-between; align-items:center;"><span>🏆 VENCEDOR: ${h.vencedor} (${h.placar})</span><span style="color:#fde047; font-size:10px; font-weight:900;">⏱️ ${h.duracao || '00:00'}</span></div><div class="hist-teams"><div><b>A:</b> ${h.timeA}</div><div><b>B:</b> ${h.timeB}</div></div><div style="display:flex; justify-content:space-between; font-size:9px; opacity:0.5; margin-top:5px;"><span>${h.data}</span>${h.mvpDaPartida ? `<span style="color:#fde047; font-weight:900;">⭐ MVP: ${h.mvpDaPartida}</span>` : ''}</div></div>`).join("");
+        document.getElementById('historicoLista').innerHTML = historico.map(h => `
+            <div class="hist-item">
+                <div class="hist-winner" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>🏆 VENCEDOR: ${h.vencedor} (${h.placar})</span>
+                    <span style="color:#fde047; font-size:10px; font-weight:900;">⏱️ ${h.duracao || '00:00'}</span>
+                </div>
+                <div class="hist-teams">
+                    <div><b>A:</b> ${h.timeA}</div>
+                    <div><b>B:</b> ${h.timeB}</div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:9px; opacity:0.5; margin-top:5px;">
+                    <span>${h.data}</span>
+                    ${h.mvpDaPartida ? `<span style="color:#fde047; font-weight:900;">⭐ MVP: ${h.mvpDaPartida}</span>` : ''}
+                </div>
+            </div>`).join("");
     }
 </script>
 </body>

@@ -3,50 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vôlei de Sexta</title>
+    <title>Vôlei de Sexta - Sistema Profissional</title>
     <link rel="icon" type="image/png" href="logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* NOVA PALETA: VERDE E MARROM */
             --bg: #1a1c14; 
             --surface: rgba(43, 46, 34, 0.8); 
-            --primary: #86efac; /* Verde claro vibrante */
+            --primary: #86efac; 
             --text: #f0f2ed; 
-            --accent: #a16207; /* Marrom dourado/terra */
+            --accent: #a16207; 
             --danger: #ef4444; 
             --glass-border: rgba(255, 255, 255, 0.08);
             --card-bg: rgba(28, 31, 22, 0.9);
         }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body {
-            /* FUNDO ALTERADO PARA IMAGEM */
             background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('fundo.png') no-repeat center center fixed;
-            background-size: cover;
-            color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden;
+            background-size: cover; color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden;
         }
         header {
             display: flex; justify-content: space-between; align-items: center; padding: 15px 20px;
             background: rgba(19, 21, 13, 0.95); border-bottom: 2px solid var(--accent);
             position: sticky; top: 0; z-index: 1000;
         }
-        /* ESTILO DA LOGO NO HEADER */
         .logo img { height: 40px; width: auto; display: block; }
-        
-        .logo { font-size: 20px; font-weight: 900; background: linear-gradient(to right, #86efac, #fde047); -webkit-background-clip: text; color: transparent; }
         .container { max-width: 1200px; margin: 15px auto; padding: 0 15px; display: flex; flex-direction: column; gap: 20px; }
         .glass-panel { background: var(--surface); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
         
         input { width: 100%; padding: 14px; margin-bottom: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white; border-radius: 10px; font-size: 16px; }
-        input:focus { border-color: var(--primary); outline: none; }
-
-        button { padding: 14px 20px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 12px; transition: 0.3s; }
+        button { padding: 14px 20px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 11px; transition: 0.3s; }
         .btn-primary { background: var(--primary); color: #062010; width: 100%; }
-        .btn-primary:hover { filter: brightness(1.1); }
         .btn-accent { background: var(--accent); color: white; }
         .btn-danger { background: var(--danger); color: white; }
         .btn-ghost { background: transparent; border: 1px solid var(--glass-border); color: var(--text); padding: 8px 15px; }
-        .btn-ghost:hover { background: rgba(255,255,255,0.05); }
         
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
         .card { background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 16px; overflow: hidden; position: relative; }
@@ -58,17 +48,15 @@
         .skill-stars { color: #fde047; }
         
         .badge-ovr { position: absolute; top: 12px; right: 12px; background: var(--primary); color: #062010; font-weight: 900; padding: 4px 10px; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .score-display { font-size: 4rem; font-weight: 900; margin: 10px 0; display: flex; justify-content: center; gap: 15px; color: var(--primary); }
+        .badge-mvp { position: absolute; top: 12px; left: 12px; background: #fde047; color: #000; font-weight: 900; padding: 4px 10px; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10; }
         
-        /* Histórico com tons de Marrom e Verde */
+        .score-display { font-size: 4rem; font-weight: 900; margin: 10px 0; display: flex; justify-content: center; gap: 15px; color: var(--primary); }
         .hist-item { background: rgba(0,0,0,0.25); border-radius: 12px; padding: 15px; margin-bottom: 10px; border-left: 4px solid var(--accent); }
         .hist-winner { color: var(--primary); font-weight: 800; font-size: 0.9rem; margin-bottom: 5px; }
         .hist-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8rem; opacity: 0.8; }
 
         .hidden { display: none !important; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1999; }
-        #loginPanel { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 350px; z-index: 2000; }
-        
         #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #062010; padding: 12px 20px; border-radius: 50px; font-weight: bold; z-index: 3000; opacity: 0; transition: 0.3s; pointer-events: none; }
         #toast.show { opacity: 1; top: 40px; }
     </style>
@@ -80,27 +68,33 @@
 <header>
     <div class="logo"><img src="logo.png" alt="Vôlei de Sexta"></div>
     <div style="display: flex; align-items: center; gap: 8px;">
-        <span id="userStatus" style="font-size: 10px; opacity: 0.6;">Jogador</span>
+        <span id="userStatus" style="font-size: 10px; opacity: 0.6;">Visitante</span>
         <button id="btnLogin" class="btn-ghost" onclick="abrirLogin()">Acesso</button>
         <button id="btnLogout" class="btn-ghost hidden" onclick="logout()">Sair</button>
     </div>
 </header>
 
 <div class="container">
-    <div id="loginPanel" class="glass-panel hidden">
+    <div id="loginPanel" class="glass-panel hidden" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; width: 90%; max-width: 350px;">
         <h2 style="text-align: center; margin-top: 0;">Identificação</h2>
         <input type="password" id="senhaInput" placeholder="Senha">
         <button class="btn-primary" onclick="fazerLogin()">Entrar</button>
     </div>
 
+    <div id="votacaoPanel" class="glass-panel hidden" style="border: 2px solid #fde047;">
+        <h2 style="margin-top:0; color: #fde047; text-align: center;">🏆 VOTAÇÃO MVP</h2>
+        <div id="listaVotos" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        <button id="btnEncerrarVoto" class="btn-danger hidden" style="width:100%; margin-top:15px;" onclick="encerrarVotacao()">Finalizar Votação</button>
+    </div>
+
     <div id="mesaPanel" class="glass-panel hidden">
-        <h2 style="margin-top:0; color: var(--primary);">⚖️ Arbitragem</h2>
+        <h2 style="margin-top:0; color: var(--primary);">⚖️ Mesa de Controle</h2>
         <div id="listaPresenca" style="max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px;"></div>
-        <button class="btn-accent" style="width:100%; margin-top:15px;" onclick="gerarTimes()">🎲 Sortear Times</button>
+        <button class="btn-accent" style="width:100%; margin-top:15px;" onclick="gerarTimes()">🎲 Sortear Equipes</button>
         
         <div id="timesGeradosPanel" class="hidden" style="margin-top: 20px; border-top: 1px solid var(--glass-border); padding-top: 15px;">
             <div id="timesGrid" style="display: flex; gap: 10px;"></div>
-            <button class="btn-primary" style="margin-top:15px;" onclick="iniciarPartida()">▶️ Iniciar Placar Live</button>
+            <button class="btn-primary" style="margin-top:15px;" onclick="iniciarPartida()">▶️ Iniciar Jogo Live</button>
         </div>
     </div>
 
@@ -108,22 +102,22 @@
         <div class="score-display"><span id="ptsA">00</span><span>×</span><span id="ptsB">00</span></div>
         <div style="font-weight: 800; color: var(--accent); margin-bottom: 15px;">SETS: <span id="setsA">0</span> - <span id="setsB">0</span></div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <button class="btn-primary" onclick="ponto('A')" style="height: 70px; font-size: 14px;">+1 TIME A</button>
-            <button class="btn-accent" onclick="ponto('B')" style="height: 70px; font-size: 14px;">+1 TIME B</button>
+            <button class="btn-primary" onclick="ponto('A')" style="height: 70px;">PONTO A</button>
+            <button class="btn-accent" onclick="ponto('B')" style="height: 70px;">PONTO B</button>
         </div>
         <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button class="btn-ghost" onclick="desfazerPonto()" style="flex:1;">↩️ Errei</button>
+            <button class="btn-ghost" onclick="desfazerPonto()" style="flex:1;">↩️ Corrigir</button>
             <button class="btn-danger" onclick="finalizarPartida()" style="flex:1;">🏁 Encerrar</button>
         </div>
     </div>
 
     <div id="adminPanel" class="glass-panel hidden">
-        <h2 id="adminTitulo" style="margin-top:0; color: var(--primary);">⚙️ Gestão de Atletas</h2>
+        <h2 id="adminTitulo" style="margin-top:0; color: var(--primary);">⚙️ Painel do Admin</h2>
         <input type="hidden" id="editIndex" value="">
-        <input type="text" id="nome" placeholder="Nome do Jogador">
+        <input type="text" id="nome" placeholder="Nome">
         <div style="display: flex; gap: 10px;">
-            <input type="number" id="numero" placeholder="Nº Camisa">
-            <input type="text" id="foto" placeholder="Link da Foto">
+            <input type="number" id="numero" placeholder="Nº">
+            <input type="text" id="foto" placeholder="Link Foto">
         </div>
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px;">
             <div><small>Ataque</small><input type="number" id="atk" step="0.5" value="3"></div>
@@ -133,23 +127,22 @@
             <div><small>Levant.</small><input type="number" id="lev" step="0.5" value="3"></div>
         </div>
         <div style="display: flex; gap: 10px;">
-            <button class="btn-primary" style="flex: 2;" onclick="salvarJogador()">💾 Salvar Atleta</button>
+            <button class="btn-primary" style="flex: 2;" onclick="salvarJogador()">💾 Salvar</button>
             <button id="btnCancelarEdit" class="btn-ghost hidden" style="flex: 1;" onclick="cancelarEdicao()">Sair</button>
         </div>
     </div>
 
     <div class="glass-panel">
-        <h2 style="margin-top:0; color: var(--primary);">🏆 Últimas Partidas</h2>
-        <div id="historicoLista">
-            <p style="opacity:0.5; font-size: 0.8rem;">Aguardando primeira partida...</p>
-        </div>
-        <div id="adminHistOps" class="hidden">
-            <button onclick="limparHistorico()" class="btn-ghost" style="font-size:10px; margin-top:10px; border-color: var(--danger); color: var(--danger);">Limpar Histórico</button>
+        <h2 style="margin-top:0; color: var(--primary);">🏆 Histórico</h2>
+        <div id="historicoLista"></div>
+        <div id="adminHistOps" class="hidden" style="display: flex; gap: 10px; margin-top: 15px;">
+            <button onclick="limparHistorico()" class="btn-ghost" style="flex:1; border-color: var(--danger); color: var(--danger);">Limpar Tudo</button>
+            <button onclick="zerarEstatisticas()" class="btn-ghost" style="flex:1; border-color: #fde047; color: #fde047;">Zerar Ranking</button>
         </div>
     </div>
 
     <div class="glass-panel">
-        <h2 style="margin-top:0; color: var(--primary);">🥇 Ranking do Grupo</h2>
+        <h2 style="margin-top:0; color: var(--primary);">🥇 Ranking Geral</h2>
         <div id="jogadoresGrid" class="grid"></div>
     </div>
 </div>
@@ -163,12 +156,10 @@
     const firebaseConfig = {
         apiKey: "AIzaSyBoZKSXzRttTqz8uL2stBNw7BcSo-UxSmE",
         authDomain: "volei-sexta.firebaseapp.com",
-        databaseURL: "https://volei-sexta-default-rtdb.firebaseio.com",
         projectId: "volei-sexta",
-        storageBucket: "volei-sexta.firebasestorage.app",
+        storageBucket: "volei-sexta.appspot.com",
         messagingSenderId: "934912388384",
-        appId: "1:934912388384:web:87f2e884d6cac5fc163b45",
-        measurementId: "G-9KLCBE092N"
+        appId: "1:934912388384:web:87f2e884d6cac5fc163b45"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -176,7 +167,8 @@
 
     let jogadores = [];
     let historico = [];
-    let partida = { ativa: false, ptsA: 0, ptsB: 0, setsA: 0, setsB: 0, timeA: [], timeB: [], historico: [] };
+    let partida = { ativa: false, ptsA: 0, ptsB: 0, setsA: 0, setsB: 0, timeA: [], timeB: [], hPoints: [], totalPtsA: 0, totalPtsB: 0 };
+    let votacao = { ativa: false, candidatos: [], votos: {} };
     window.usuarioLogado = null;
 
     onSnapshot(doc(db, "volei", "dados"), (snapshot) => {
@@ -185,18 +177,15 @@
             jogadores = data.elenco || [];
             partida = data.partidaAtiva || partida;
             historico = data.historicoJogos || [];
+            votacao = data.votacao || { ativa: false, candidatos: [], votos: {} };
             atualizarTudo();
         }
     });
 
     async function salvarNaRede() {
-        try {
-            await setDoc(doc(db, "volei", "dados"), { 
-                elenco: jogadores, 
-                partidaAtiva: partida,
-                historicoJogos: historico 
-            });
-        } catch (e) { showToast("Erro ao sincronizar!"); }
+        await setDoc(doc(db, "volei", "dados"), { 
+            elenco: jogadores, partidaAtiva: partida, historicoJogos: historico, votacao: votacao
+        });
     }
 
     window.showToast = (msg) => {
@@ -222,14 +211,38 @@
     window.fazerLogin = () => {
         const s = document.getElementById('senhaInput').value;
         if(s === "admin123") window.usuarioLogado = "admin";
-        else if(s === "jogo123") window.usuarioLogado = "mesa";
-        else { showToast("❌ Senha incorreta"); return; }
-        fecharLogin();
-        document.getElementById('senhaInput').value = "";
-        atualizarTudo();
+        else if(s === "mesa123") window.usuarioLogado = "mesa";
+        else return showToast("❌ Senha incorreta");
+        fecharLogin(); atualizarTudo();
     };
 
     window.logout = () => { window.usuarioLogado = null; atualizarTudo(); };
+
+    window.salvarJogador = async () => {
+        const nome = document.getElementById('nome').value;
+        if(!nome) return showToast("Nome é obrigatório");
+        const j = {
+            nome, numero: document.getElementById('numero').value || "00",
+            foto: document.getElementById('foto').value || "https://i.imgur.com/3c8E8QY.png",
+            atk: Number(document.getElementById('atk').value), def: Number(document.getElementById('def').value),
+            rec: Number(document.getElementById('rec').value), sac: Number(document.getElementById('sac').value),
+            lev: Number(document.getElementById('lev').value), jogos: 0, vitorias: 0, mvps: 0
+        };
+        const idx = document.getElementById('editIndex').value;
+        if(idx === "") jogadores.push(j);
+        else {
+            j.jogos = jogadores[idx].jogos; j.vitorias = jogadores[idx].vitorias; j.mvps = jogadores[idx].mvps;
+            jogadores[idx] = j;
+        }
+        cancelarEdicao(); await salvarNaRede();
+    };
+
+    window.excluirJogador = async (i) => {
+        if(confirm("Excluir este atleta?")) {
+            jogadores.splice(i, 1);
+            await salvarNaRede();
+        }
+    };
 
     window.prepararEdicao = (i) => {
         const j = jogadores[i];
@@ -242,134 +255,154 @@
         document.getElementById('rec').value = j.rec;
         document.getElementById('sac').value = j.sac;
         document.getElementById('lev').value = j.lev;
-        
-        document.getElementById('adminTitulo').innerText = "✍️ Editando Jogador";
         document.getElementById('btnCancelarEdit').classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({top: 0, behavior: 'smooth'});
     };
 
     window.cancelarEdicao = () => {
         document.getElementById('editIndex').value = "";
         document.getElementById('nome').value = "";
-        document.getElementById('numero').value = "";
-        document.getElementById('foto').value = "";
-        document.getElementById('adminTitulo').innerText = "⚙️ Gestão de Atletas";
         document.getElementById('btnCancelarEdit').classList.add('hidden');
     };
 
-    window.salvarJogador = async () => {
-        const nomeInput = document.getElementById('nome').value;
-        if(!nomeInput) return showToast("⚠️ Nome obrigatório!");
-
-        const j = {
-            nome: nomeInput,
-            numero: document.getElementById('numero').value || "00",
-            foto: document.getElementById('foto').value || "https://i.imgur.com/3c8E8QY.png",
-            atk: Number(document.getElementById('atk').value), 
-            def: Number(document.getElementById('def').value), 
-            rec: Number(document.getElementById('rec').value), 
-            sac: Number(document.getElementById('sac').value), 
-            lev: Number(document.getElementById('lev').value),
-            jogos: 0, vitorias: 0
-        };
-
-        const idx = document.getElementById('editIndex').value;
-        if(idx === "") {
-            jogadores.push(j);
-        } else {
-            j.jogos = jogadores[idx].jogos;
-            j.vitorias = jogadores[idx].vitorias;
-            jogadores[idx] = j;
-        }
-
-        cancelarEdicao();
-        await salvarNaRede();
-        showToast("✅ Salvo com sucesso!");
-    };
-
-    window.excluir = async (i) => { if(confirm("Deseja apagar este atleta?")) { jogadores.splice(i, 1); await salvarNaRede(); } };
-
     window.gerarTimes = async () => {
-        const sel = Array.from(document.querySelectorAll('.chk:checked')).map(c => ({...jogadores[c.value], idx: c.value, ovr: calcOVR(jogadores[c.value])}));
-        if(sel.length < 2) return showToast("Selecione os presentes!");
-        sel.sort((a,b) => b.ovr - a.ovr);
-        partida.timeA = []; partida.timeB = [];
-        sel.forEach((j, i) => { if(i % 2 === 0) partida.timeA.push(j); else partida.timeB.push(j); });
+        const selIds = Array.from(document.querySelectorAll('.chk:checked')).map(c => c.value);
+        if(selIds.length < 2) return showToast("Selecione os presentes!");
+
+        let sel = selIds.map(idx => {
+            let j = jogadores[idx];
+            let ovr = calcOVR(j);
+            return { ...j, originalIdx: idx, ovr: ovr, rank: ovr + (j.jogos > 0 ? (j.vitorias/j.jogos)*10 : 0) };
+        });
+
+        sel.sort((a, b) => b.rank - a.rank);
+        let melhorA = [], melhorB = [], menorDif = Infinity;
+
+        for (let t = 0; t < 50; t++) {
+            let tA = [], tB = [], sA = 0, sB = 0;
+            for (let i = 0; i < sel.length; i += 2) {
+                let p1 = sel[i], p2 = sel[i+1];
+                if (p2) {
+                    if (Math.random() > 0.5) { tA.push(p1); sA += p1.ovr; tB.push(p2); sB += p2.ovr; }
+                    else { tA.push(p2); sA += p2.ovr; tB.push(p1); sB += p1.ovr; }
+                } else {
+                    if (sA < sB) { tA.push(p1); sA += p1.ovr; }
+                    else { tB.push(p1); sB += p1.ovr; }
+                }
+            }
+            let dif = Math.abs(sA - sB);
+            if (dif < menorDif) { menorDif = dif; melhorA = tA; melhorB = tB; }
+            if (dif <= 15) break;
+        }
+        partida.timeA = melhorA; partida.timeB = melhorB;
         await salvarNaRede();
+        showToast("Times gerados (Dif: " + menorDif + ")");
     };
 
     window.iniciarPartida = async () => {
-        partida.ativa = true; partida.ptsA = 0; partida.ptsB = 0; partida.setsA = 0; partida.setsB = 0; partida.historico = [];
-        await salvarNaRede();
+        partida.ativa = true; partida.ptsA = 0; partida.ptsB = 0; partida.setsA = 0; partida.setsB = 0; 
+        partida.hPoints = []; partida.totalPtsA = 0; partida.totalPtsB = 0;
+        votacao.ativa = false; await salvarNaRede();
     };
 
     window.ponto = async (t) => {
-        if(t === 'A') partida.ptsA++; else partida.ptsB++;
-        partida.historico.push(t);
+        if(t === 'A') { partida.ptsA++; partida.totalPtsA++; } 
+        else { partida.ptsB++; partida.totalPtsB++; }
+        partida.hPoints.push(t);
         if(partida.ptsA >= 25 && (partida.ptsA - partida.ptsB) >= 2) { partida.setsA++; partida.ptsA=0; partida.ptsB=0; }
         if(partida.ptsB >= 25 && (partida.ptsB - partida.ptsA) >= 2) { partida.setsB++; partida.ptsA=0; partida.ptsB=0; }
         await salvarNaRede();
     };
 
     window.desfazerPonto = async () => {
-        let u = partida.historico.pop();
-        if(u === 'A' && partida.ptsA > 0) partida.ptsA--;
-        else if(u === 'B' && partida.ptsB > 0) partida.ptsB--;
+        let u = partida.hPoints.pop();
+        if(u === 'A' && partida.totalPtsA > 0) { if(partida.ptsA > 0) partida.ptsA--; partida.totalPtsA--; }
+        else if(u === 'B' && partida.totalPtsB > 0) { if(partida.ptsB > 0) partida.ptsB--; partida.totalPtsB--; }
         await salvarNaRede();
     };
 
     window.finalizarPartida = async () => {
-        if(!confirm("Finalizar e salvar no histórico?")) return;
+        if(!confirm("Encerrar jogo e salvar histórico?")) return;
         
-        const vencedorTexto = partida.setsA > partida.setsB ? "TIME A" : (partida.setsB > partida.setsA ? "TIME B" : "EMPATE");
-        const vitorioso = partida.setsA > partida.setsB ? partida.timeA : (partida.setsB > partida.setsA ? partida.timeB : null);
+        // CRITÉRIO DE DESEMPATE: Se sets forem iguais, vence quem fez mais pontos totais
+        let venceuA = false;
+        if(partida.setsA > partida.setsB) venceuA = true;
+        else if(partida.setsB > partida.setsA) venceuA = false;
+        else venceuA = (partida.totalPtsA >= partida.totalPtsB);
 
-        const registro = {
-            vencedor: vencedorTexto,
-            placar: `${partida.setsA} x ${partida.setsB}`,
+        const vitoriosos = venceuA ? partida.timeA : partida.timeB;
+        
+        historico.unshift({
+            vencedor: venceuA ? "TIME A" : "TIME B",
+            placar: `${partida.setsA}x${partida.setsB}`,
             timeA: partida.timeA.map(j => j.nome).join(", "),
             timeB: partida.timeB.map(j => j.nome).join(", "),
-            data: new Date().toLocaleDateString('pt-BR') + " " + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})
-        };
-        historico.unshift(registro);
-        if(historico.length > 15) historico.pop();
+            data: new Date().toLocaleString(),
+            mvpDaPartida: null
+        });
 
         [...partida.timeA, ...partida.timeB].forEach(p => {
-            if(jogadores[p.idx]) {
-                jogadores[p.idx].jogos++;
-                if(vitorioso && vitorioso.some(w => w.nome === p.nome)) jogadores[p.idx].vitorias++;
+            if(jogadores[p.originalIdx]) {
+                jogadores[p.originalIdx].jogos++;
+                if(vitoriosos.some(w => w.nome === p.nome)) jogadores[p.originalIdx].vitorias++;
             }
         });
 
-        partida.ativa = false;
-        await salvarNaRede();
-        showToast("🏁 Jogo encerrado!");
+        votacao.ativa = true;
+        votacao.candidatos = [...partida.timeA, ...partida.timeB].map(j => j.nome);
+        votacao.votos = {};
+        votacao.candidatos.forEach(n => votacao.votos[n] = 0);
+        partida.ativa = false; await salvarNaRede();
     };
 
-    window.limparHistorico = async () => {
-        if(confirm("Apagar todos os registros de jogos?")) {
-            historico = [];
-            await salvarNaRede();
-        }
+    window.votarMVP = async (nome) => {
+        votacao.votos[nome] = (votacao.votos[nome] || 0) + 1;
+        await salvarNaRede();
     };
+
+    window.encerrarVotacao = async () => {
+        let vencedor = Object.keys(votacao.votos).reduce((a, b) => votacao.votos[a] > votacao.votos[b] ? a : b);
+        if (historico.length > 0) historico[0].mvpDaPartida = vencedor;
+        const idx = jogadores.findIndex(j => j.nome === vencedor);
+        if(idx !== -1) jogadores[idx].mvps = (jogadores[idx].mvps || 0) + 1;
+        votacao.ativa = false; await salvarNaRede();
+        showToast("MVP: " + vencedor);
+    };
+
+    window.zerarEstatisticas = async () => { if(confirm("Zerar ranking?")) { jogadores = jogadores.map(j => ({ ...j, jogos: 0, vitorias: 0, mvps: 0 })); await salvarNaRede(); } };
+    window.limparHistorico = async () => { if(confirm("Limpar histórico?")) { historico = []; await salvarNaRede(); } };
 
     function atualizarTudo() {
-        document.getElementById('adminPanel').classList.toggle('hidden', window.usuarioLogado !== 'admin');
-        document.getElementById('mesaPanel').classList.toggle('hidden', !window.usuarioLogado);
+        const isAdmin = window.usuarioLogado === 'admin';
+        const isMesa = window.usuarioLogado === 'mesa' || isAdmin;
+
+        document.getElementById('adminPanel').classList.toggle('hidden', !isAdmin);
+        document.getElementById('mesaPanel').classList.toggle('hidden', !isMesa);
         document.getElementById('btnLogout').classList.toggle('hidden', !window.usuarioLogado);
         document.getElementById('btnLogin').classList.toggle('hidden', !!window.usuarioLogado);
-        document.getElementById('adminHistOps').classList.toggle('hidden', window.usuarioLogado !== 'admin');
+        document.getElementById('adminHistOps').classList.toggle('hidden', !isAdmin);
         document.getElementById('userStatus').innerText = window.usuarioLogado ? window.usuarioLogado.toUpperCase() : "Visitante";
-        
-        // Ranking
-        const grid = document.getElementById('jogadoresGrid');
-        grid.innerHTML = jogadores.map((j, i) => `
+
+        if (votacao.ativa) {
+            document.getElementById('votacaoPanel').classList.remove('hidden');
+            document.getElementById('btnEncerrarVoto').classList.toggle('hidden', !isAdmin);
+            document.getElementById('listaVotos').innerHTML = votacao.candidatos.map(n => `
+                <button class="btn-ghost" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;" onclick="votarMVP('${n}')">
+                    <span>👤 ${n}</span> <span style="background:var(--primary); color:#000; padding:2px 10px; border-radius:6px; font-weight:900;">${votacao.votos[n] || 0}</span>
+                </button>
+            `).join("");
+        } else document.getElementById('votacaoPanel').classList.add('hidden');
+
+        document.getElementById('jogadoresGrid').innerHTML = jogadores
+            .sort((a,b) => (b.mvps || 0) - (a.mvps || 0) || calcOVR(b) - calcOVR(a))
+            .map((j, i) => `
             <div class="card">
                 <div class="badge-ovr">${calcOVR(j)}</div>
+                ${j.mvps > 0 ? `<div class="badge-mvp">🏆 ${j.mvps}</div>` : ''}
                 <img src="${j.foto}" class="card-img" onerror="this.src='https://i.imgur.com/3c8E8QY.png'">
                 <div class="card-info">
-                    <div style="font-weight:900; color: var(--primary);">#${j.numero} ${j.nome}</div>
-                    <div style="font-size:11px; opacity: 0.7; margin-bottom:8px;">${j.vitorias} VITÓRIAS EM ${j.jogos} JOGOS</div>
+                    <div style="font-weight:900; color:var(--primary);">${j.nome} #${j.numero}</div>
+                    <div style="font-size:10px; opacity:0.7;">VIT: ${j.vitorias} | JOGOS: ${j.jogos}</div>
                     <div class="skills-list">
                         <div class="skill-item"><span>ATK</span><span class="skill-stars">${renderStars(j.atk)}</span></div>
                         <div class="skill-item"><span>DEF</span><span class="skill-stars">${renderStars(j.def)}</span></div>
@@ -377,54 +410,55 @@
                         <div class="skill-item"><span>SAC</span><span class="skill-stars">${renderStars(j.sac)}</span></div>
                         <div class="skill-item"><span>LEV</span><span class="skill-stars">${renderStars(j.lev)}</span></div>
                     </div>
-                    ${window.usuarioLogado === 'admin' ? `
-                        <div style="display: flex; gap: 5px; margin-top: 10px;">
-                            <button onclick="prepararEdicao(${i})" class="btn-accent" style="flex:1; padding:5px; font-size:10px;">Editar</button>
-                            <button onclick="excluir(${i})" class="btn-danger" style="flex:1; padding:5px; font-size:10px;">Excluir</button>
+                    ${isAdmin ? `
+                        <div style="display:flex; gap:5px; margin-top:10px;">
+                            <button onclick="prepararEdicao(${jogadores.indexOf(j)})" class="btn-ghost" style="flex:1; font-size:9px;">EDITAR</button>
+                            <button onclick="excluirJogador(${jogadores.indexOf(j)})" class="btn-ghost" style="flex:0.3; border-color:var(--danger); color:var(--danger);">🗑️</button>
                         </div>
                     ` : ''}
                 </div>
             </div>
         `).join("");
 
-        // Histórico
-        const histDiv = document.getElementById('historicoLista');
-        if(historico.length > 0) {
-            histDiv.innerHTML = historico.map(h => `
-                <div class="hist-item">
-                    <div class="hist-winner">🏆 VITÓRIA: ${h.vencedor} (${h.placar}) <span style="float:right; opacity:0.5; font-weight:normal; font-size: 10px;">${h.data}</span></div>
-                    <div class="hist-teams">
-                        <div><b style="color:var(--primary)">TIME A:</b> ${h.timeA}</div>
-                        <div><b style="color:var(--accent)">TIME B:</b> ${h.timeB}</div>
-                    </div>
-                </div>
-            `).join("");
-        } else {
-            histDiv.innerHTML = '<p style="opacity:0.5; font-size: 0.8rem;">Ainda não há partidas registradas.</p>';
-        }
-
-        // Presença
         document.getElementById('listaPresenca').innerHTML = jogadores.map((j, i) => `
-            <label style="display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
-                <input type="checkbox" class="chk" value="${i}" checked style="width:20px; height:20px;"> <span>${j.nome}</span>
+            <label style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                <input type="checkbox" class="chk" value="${i}" checked style="width:18px; height:18px;"> ${j.nome}
             </label>
         `).join("");
 
-        // Times
         if(partida.timeA.length > 0) {
             document.getElementById('timesGeradosPanel').classList.remove('hidden');
+            const sA = partida.timeA.reduce((acc, j) => acc + j.ovr, 0);
+            const sB = partida.timeB.reduce((acc, j) => acc + j.ovr, 0);
             document.getElementById('timesGrid').innerHTML = `
-                <div style="flex:1; background:rgba(134,239,172,0.1); padding:10px; border-radius:10px; border: 1px solid rgba(134,239,172,0.2);"><b>TIME A</b><br><small>${partida.timeA.map(j=>j.nome).join("<br>")}</small></div>
-                <div style="flex:1; background:rgba(161,98,7,0.1); padding:10px; border-radius:10px; border: 1px solid rgba(161,98,7,0.2);"><b>TIME B</b><br><small>${partida.timeB.map(j=>j.nome).join("<br>")}</small></div>
+                <div style="flex:1; background:rgba(134,239,172,0.1); padding:10px; border-radius:10px;">
+                    <b>TIME A</b> (${sA})<br><small>${partida.timeA.map(j=>j.nome).join("<br>")}</small>
+                </div>
+                <div style="flex:1; background:rgba(161,98,7,0.1); padding:10px; border-radius:10px;">
+                    <b>TIME B</b> (${sB})<br><small>${partida.timeB.map(j=>j.nome).join("<br>")}</small>
+                </div>
             `;
         }
 
-        // Placar
         document.getElementById('placarPanel').classList.toggle('hidden', !partida.ativa);
         document.getElementById('ptsA').innerText = partida.ptsA.toString().padStart(2,'0');
         document.getElementById('ptsB').innerText = partida.ptsB.toString().padStart(2,'0');
         document.getElementById('setsA').innerText = partida.setsA;
         document.getElementById('setsB').innerText = partida.setsB;
+
+        document.getElementById('historicoLista').innerHTML = historico.map(h => `
+            <div class="hist-item">
+                <div class="hist-winner" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>🏆 VENCEDOR: ${h.vencedor} (${h.placar})</span>
+                    ${h.mvpDaPartida ? `<span style="color:#fde047; font-size:10px; font-weight:900;">⭐ MVP: ${h.mvpDaPartida}</span>` : ''}
+                </div>
+                <div class="hist-teams">
+                    <div><b>A:</b> ${h.timeA}</div>
+                    <div><b>B:</b> ${h.timeB}</div>
+                </div>
+                <div style="font-size:9px; opacity:0.5; margin-top:5px;">${h.data}</div>
+            </div>
+        `).join("");
     }
 </script>
 </body>
